@@ -77,5 +77,14 @@ export default defineConfig(({ mode }) => ({
     // Output next to Express so production (e.g. Railway) always serves assets from the same tree as server.js.
     outDir: path.resolve(__dirname, '../server/public'),
     emptyOutDir: true,
+    // Pin filenames under assets/ so index.html /assets/* always matches on-disk layout on any host.
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
   },
 }))
