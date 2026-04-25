@@ -9,6 +9,17 @@ function isAdminPath(p) {
   return p === '/admin' || p.startsWith('/admin/')
 }
 
+/** Module + stylesheet requests use CORS mode when crossorigin is set; strip it for same-origin deploys. */
+function stripCrossoriginFromHtml() {
+  return {
+    name: 'strip-html-crossorigin',
+    apply: 'build',
+    transformIndexHtml(html) {
+      return html.replace(/\s+crossorigin(=["'][^"']*["'])?/gi, '')
+    },
+  }
+}
+
 function adminBasicAuthPlugin(mode) {
   const env = loadEnv(mode, path.join(__dirname, '..', 'server'), '')
   const user = env.ADMIN_BASIC_USER
@@ -53,7 +64,7 @@ function adminBasicAuthPlugin(mode) {
 }
 
 export default defineConfig(({ mode }) => ({
-  plugins: [adminBasicAuthPlugin(mode), react()],
+  plugins: [adminBasicAuthPlugin(mode), react(), stripCrossoriginFromHtml()],
   server: {
     port: 5173,
     proxy: {

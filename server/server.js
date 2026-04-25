@@ -54,6 +54,8 @@ function basicAuthAdmin(req, res, next) {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Behind Railway / reverse proxies — correct req.secure, X-Forwarded-* (does not set cache headers).
+app.set('trust proxy', 1);
 
 // ─── CORS ──────────────────────────────────────────────────────────────────────
 // Allow the React dev server (port 5173) and any configured production origin.
@@ -122,9 +124,72 @@ if (!fs.existsSync(path.join(clientDist, 'index.html'))) {
   );
 }
 
+try {
+  const names = fs.readdirSync(path.join(clientDist, 'assets'));
+  console.log(`[party-app] ${names.length} file(s) in assets/: ${names.slice(0, 5).join(', ')}${names.length > 5 ? '…' : ''}`);
+} catch (e) {
+  console.warn('[party-app] No assets/ directory next to index.html — CSS/JS will 404.');
+}
+
 app.use(basicAuthAdmin);
-// Serve the built React app in production
-app.use(express.static(clientDist));
+
+// Vite bundles: serve explicitly so we never fall through to the SPA (which would return
+// index.html as text/html and trigger the browser MIME error for .css / .js).
+const assetsRoot = path.join(clientDist, 'assets');
+
+function requestPathname(req) {
+  let p = (req.path && req.path !== '' ? req.path : '').split('?')[0];
+  if (p && p.startsWith('/')) return p;
+  const raw = (req.originalUrl || req.url || '/').split('?')[0];
+  if (raw.startsWith('/')) return raw;
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      return new URL(raw).pathname || '/';
+    } catch {
+      /* ignore */
+    }
+  }
+  return raw.startsWith('/') ? raw : `/${raw}`;
+}
+
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const pathname = requestPathname(req);
+  if (!pathname.startsWith('/assets/')) return next();
+  const rel = pathname.slice('/assets/'.length);
+  if (!rel || rel.includes('..')) {
+    res.status(400).type('text/plain').send('Bad asset path');
+    return;
+  }
+  const resolvedRoot = path.resolve(assetsRoot);
+  const fp = path.resolve(path.join(assetsRoot, rel));
+  if (fp !== resolvedRoot && !fp.startsWith(resolvedRoot + path.sep)) {
+    res.status(403).end();
+    return;
+  }
+  fs.access(fp, fs.constants.R_OK, (err) => {
+    if (err) {
+      res.status(404).type('text/plain').send('Missing asset');
+      return;
+    }
+    // Hashed Vite filenames — safe to cache forever (avoid no-store, which breaks bfcache / tab restore).
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.sendFile(rel, { root: assetsRoot }, (sendErr) => {
+      if (sendErr && !res.headersSent) res.status(500).end();
+    });
+  });
+});
+
+// Serve the built React app in production (remaining static files, e.g. favicon)
+app.use(express.static(clientDist, {
+  etag: true,
+  lastModified: true,
+  setHeaders(res, filePath) {
+    if (filePath.endsWith(`${path.sep}index.html`) || path.basename(filePath) === 'index.html') {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  },
+}));
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function normalizePhone(phone) {
@@ -356,6 +421,7 @@ app.get(/^(?!\/api|\/webhook).*/, (req, res) => {
     return res.status(404).type('text/plain').send('Asset not found');
   }
   const indexPath = path.join(clientDist, 'index.html');
+  res.setHeader('Cache-Control', 'no-cache');
   res.sendFile(indexPath, (err) => {
     if (err) res.status(500).type('text/plain').send('Client app not built. Run npm run build from the repo root.');
   });
