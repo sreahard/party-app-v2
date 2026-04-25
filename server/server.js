@@ -101,14 +101,24 @@ if (!db.prepare("SELECT 1 FROM settings WHERE key='invite_message'").get()) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Built SPA: repo root `client/dist`, or override with CLIENT_DIST (path relative to cwd).
-const clientDist = process.env.CLIENT_DIST
-  ? path.resolve(process.cwd(), process.env.CLIENT_DIST)
-  : path.join(__dirname, '..', 'client', 'dist');
+function resolveClientDist() {
+  if (process.env.CLIENT_DIST) {
+    return path.resolve(process.cwd(), process.env.CLIENT_DIST);
+  }
+  // Prefer Vite outDir (../server/public from client); fallback to legacy client/dist for old builds.
+  const cohosted = path.join(__dirname, 'public');
+  const legacy = path.join(__dirname, '..', 'client', 'dist');
+  if (fs.existsSync(path.join(cohosted, 'index.html'))) return cohosted;
+  if (fs.existsSync(path.join(legacy, 'index.html'))) return legacy;
+  return cohosted;
+}
+
+const clientDist = resolveClientDist();
 
 if (!fs.existsSync(path.join(clientDist, 'index.html'))) {
   console.warn(
-    `[party-app] Client build missing at ${clientDist}. Run "npm run build" from the repo root before deploy, or set CLIENT_DIST.`
+    `[party-app] Client build missing at ${clientDist} (cwd=${process.cwd()}). ` +
+      'Run "npm run build" from the repo root on deploy, or set CLIENT_DIST.'
   );
 }
 
@@ -354,5 +364,6 @@ app.get(/^(?!\/api|\/webhook).*/, (req, res) => {
 // ─── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n🎉 Server running at http://localhost:${PORT}`);
+  console.log(`   Static SPA: ${clientDist}`);
   console.log(`   Twilio webhook → http://YOUR_DOMAIN/webhook/sms\n`);
 });

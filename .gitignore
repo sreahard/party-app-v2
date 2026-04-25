@@ -9,6 +9,7 @@ client/.env.*.local
 
 # Data & build
 server/rsvp.db
+server/public
 client/dist
 
 .DS_Store

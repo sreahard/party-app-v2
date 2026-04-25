@@ -63,6 +63,8 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: 'dist',
+    // Output next to Express so production (e.g. Railway) always serves assets from the same tree as server.js.
+    outDir: path.resolve(__dirname, '../server/public'),
+    emptyOutDir: true,
   },
 }))
