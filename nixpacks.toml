@@ -1,0 +1,4 @@
+# Railway / Nixpacks: install runs automatically; this adds the Vite production build
+# so `client/dist` exists when Express serves static files.
+[phases.build]
+cmds = ["npm run build"]

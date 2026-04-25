@@ -6,6 +6,7 @@ const cors = require('cors');
 const Database = require('better-sqlite3');
 const twilio = require('twilio');
 const path = require('path');
+const fs = require('fs');
 
 function isAdminPath(p) {
   return p === '/admin' || p.startsWith('/admin/');
@@ -100,7 +101,17 @@ if (!db.prepare("SELECT 1 FROM settings WHERE key='invite_message'").get()) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const clientDist = path.join(__dirname, '..', 'client', 'dist');
+// Built SPA: repo root `client/dist`, or override with CLIENT_DIST (path relative to cwd).
+const clientDist = process.env.CLIENT_DIST
+  ? path.resolve(process.cwd(), process.env.CLIENT_DIST)
+  : path.join(__dirname, '..', 'client', 'dist');
+
+if (!fs.existsSync(path.join(clientDist, 'index.html'))) {
+  console.warn(
+    `[party-app] Client build missing at ${clientDist}. Run "npm run build" from the repo root before deploy, or set CLIENT_DIST.`
+  );
+}
+
 app.use(basicAuthAdmin);
 // Serve the built React app in production
 app.use(express.static(clientDist));
@@ -327,9 +338,17 @@ app.post('/webhook/sms', (req, res) => {
 });
 
 // ─── SPA fallback ─────────────────────────────────────────────────────────────
-// Send index.html for any non-API route so React Router handles it client-side
-app.get(/^(?!\/api|\/webhook).*/, (_req, res) => {
-  res.sendFile(path.join(clientDist, 'index.html'));
+// Send index.html for any non-API route so React Router handles it client-side.
+// Do not send HTML for /assets/* (Vite bundles): if static missed the file, return 404
+// so the browser does not report a CSS MIME error from an HTML body.
+app.get(/^(?!\/api|\/webhook).*/, (req, res) => {
+  if (req.path.startsWith('/assets/')) {
+    return res.status(404).type('text/plain').send('Asset not found');
+  }
+  const indexPath = path.join(clientDist, 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) res.status(500).type('text/plain').send('Client app not built. Run npm run build from the repo root.');
+  });
 });
 
 // ─── Start ─────────────────────────────────────────────────────────────────────
