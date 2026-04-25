@@ -1,0 +1,16 @@
+node_modules/
+**/node_modules/
+
+# Secrets — copy from .env.example
+server/.env
+client/.env
+client/.env.local
+client/.env.*.local
+
+# Data & build
+server/rsvp.db
+client/dist
+
+.DS_Store
+*.log
+npm-debug.log*

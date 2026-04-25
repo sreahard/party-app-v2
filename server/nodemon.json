@@ -1,0 +1,4 @@
+{
+  "watch": ["server.js", ".env"],
+  "ignore": ["node_modules/**", "rsvp.db", "*.db"]
+}
