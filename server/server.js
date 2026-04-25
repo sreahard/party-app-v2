@@ -58,17 +58,29 @@ const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
 // ─── CORS ──────────────────────────────────────────────────────────────────────
-// Allow the React dev server (port 5173) and any configured production origin.
-const allowedOrigins = ['http://localhost:5173'];
-if (process.env.CLIENT_ORIGIN) allowedOrigins.push(process.env.CLIENT_ORIGIN);
+// Delegated config so we can read Host: same-origin browser fetches (SPA + API on one Railway
+// URL) send Origin: https://<this-host>, which was not covered by localhost + CLIENT_ORIGIN only.
+app.use(
+  cors((req, callback) => {
+    const origin = req.headers.origin;
+    const host = req.get('host');
+    const selfOrigin = host ? `${req.protocol}://${host}` : null;
 
-app.use(cors({
-  origin: (origin, cb) => {
-    // Allow requests with no origin (e.g. mobile apps, curl, Twilio webhooks)
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error('Not allowed by CORS'));
-  },
-}));
+    const allowList = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+    if (process.env.CLIENT_ORIGIN) allowList.push(process.env.CLIENT_ORIGIN.trim());
+
+    const allow =
+      !origin ||
+      allowList.includes(origin) ||
+      (selfOrigin && origin === selfOrigin);
+
+    // `origin: false` is misread by cors as "falsy → *"; use [] to deny. `true` reflects the request Origin.
+    callback(null, {
+      origin: allow ? true : [],
+      credentials: false,
+    });
+  })
+);
 
 // ─── Database ──────────────────────────────────────────────────────────────────
 const db = new Database('rsvp.db');
