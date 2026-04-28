@@ -68,7 +68,8 @@ Open http://localhost:5173 in your browser.
    - `TWILIO_ACCOUNT_SID`
    - `TWILIO_AUTH_TOKEN`
    - `TWILIO_PHONE_NUMBER`
-5. Set your Twilio phone number's incoming webhook to:
+5. **Persist the database (SQLite):** the app’s data lives in a single SQLite file. Railway’s filesystem is wiped on each deploy unless you use a volume. In Railway: add a **Volume** to the service (e.g. mount path `/data`), then set **`SQLITE_PATH=/data/rsvp.db`** in the service variables. Redeploy once; new data is stored on the volume and survives deploys. (Alternatively, switch to Railway Postgres and point the app at it — not configured in this repo yet.)
+6. Set your Twilio phone number's incoming webhook to:
    ```
    https://YOUR-RAILWAY-URL/webhook/sms
    ```

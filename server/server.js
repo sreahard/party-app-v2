@@ -83,7 +83,13 @@ app.use(
 );
 
 // ─── Database ──────────────────────────────────────────────────────────────────
-const db = new Database('rsvp.db');
+// Default: next to this file (stable cwd). On Railway/hosted SQLite, set SQLITE_PATH
+// to a file on a persistent volume (e.g. /data/rsvp.db) or the DB is lost every deploy.
+const dbPath = process.env.SQLITE_PATH
+  ? path.resolve(process.env.SQLITE_PATH)
+  : path.join(__dirname, 'rsvp.db');
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+const db = new Database(dbPath);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS guests (
