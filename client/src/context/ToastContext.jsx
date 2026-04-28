@@ -6,12 +6,11 @@ export function useToast() {
   return useContext(ToastContext)
 }
 
-const BORDER = { success: 'border-l-green-500', error: 'border-l-red-500', info: 'border-l-brand-pink' }
+const BORDER = { success: 'border-l-emerald-500', error: 'border-l-red-500', info: 'border-l-brand-sea' }
 
 function Toast({ message, type }) {
   return (
-    <div className={`bg-gray-900 text-white px-5 py-3 rounded-xl text-sm shadow-2xl max-w-xs
-                     border-l-4 animate-slide-up ${BORDER[type] ?? BORDER.info}`}>
+    <div className={`max-w-sm rounded-xl border-l-4 bg-brand-ink px-5 py-4 text-base font-medium text-white shadow-2xl animate-slide-up ${BORDER[type] ?? BORDER.info}`}>
       {message}
     </div>
   )

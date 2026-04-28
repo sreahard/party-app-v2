@@ -14,8 +14,9 @@ export default function DashboardPage() {
 
   const responded  = (stats?.yes ?? 0) + (stats?.no ?? 0)
   const pct        = stats?.total > 0 ? Math.round((responded / stats.total) * 100) : 0
-  const recentRsvps = [...guests]
-    .filter(g => g.rsvp_status !== 'pending' && g.responded_at)
+  const guestRows = Array.isArray(guests) ? guests : []
+  const recentRsvps = guestRows
+    .filter((g) => g.rsvp_status !== 'pending' && g.responded_at)
     .sort((a, b) => new Date(b.responded_at) - new Date(a.responded_at))
     .slice(0, 6)
 
@@ -23,22 +24,24 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <StatCard num={stats?.invited}         label="Invited"        color="text-brand-purple" />
-        <StatCard num={stats?.yes}             label="Coming ✓"       color="text-green-600" />
-        <StatCard num={stats?.no}              label="Can't Make It"  color="text-red-500" />
-        <StatCard num={stats?.pending}         label="Awaiting Reply" color="text-yellow-500" />
-        <StatCard num={stats?.total_headcount} label="Total Headcount" color="text-brand-pink" />
+        <StatCard num={stats?.invited}         label="Invited"        color="text-brand-ocean-soft" />
+        <StatCard num={stats?.yes}             label="Coming ✓"       color="text-emerald-900" />
+        <StatCard num={stats?.no}              label="Can't Make It"  color="text-red-800" />
+        <StatCard num={stats?.pending}         label="Awaiting Reply" color="text-amber-900" />
+        <StatCard num={stats?.total_headcount} label="Total Headcount" color="text-brand-coral" />
       </div>
 
       {/* Progress bar */}
       <div className="card">
-        <div className="flex justify-between items-center mb-2 text-sm">
-          <span className="font-medium">RSVP Progress</span>
-          <span className="text-gray-400">{responded} of {stats?.total ?? 0} responded ({pct}%)</span>
+        <div className="mb-2 flex items-center justify-between text-base">
+          <span className="font-semibold text-brand-ink">RSVP Progress</span>
+          <span className="text-brand-muted">{responded} of {stats?.total ?? 0} responded ({pct}%)</span>
         </div>
-        <div className="h-2.5 bg-brand-pink-light rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-brand-pink to-brand-purple rounded-full transition-all duration-700"
-               style={{ width: `${pct}%` }} />
+        <div className="h-2 overflow-hidden rounded-full bg-brand-sea-mist/60">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-brand-sea to-brand-ocean transition-all duration-700"
+            style={{ width: `${pct}%` }}
+          />
         </div>
       </div>
 
@@ -48,15 +51,15 @@ export default function DashboardPage() {
         {recentRsvps.length === 0 ? (
           <Empty emoji="📭" message="No RSVPs yet — send your invites to get started!" />
         ) : (
-          <ul className="divide-y divide-brand-pink-light">
+          <ul className="divide-y divide-brand-sea-mist/60">
             {recentRsvps.map(g => (
               <li key={g.id} className="flex items-center justify-between py-3">
                 <div>
-                  <span className="font-medium text-sm">{g.name}</span>
-                  {g.note && <span className="text-xs text-gray-400 ml-2">— {g.note}</span>}
+                  <span className="text-base font-semibold text-brand-ink">{g.name}</span>
+                  {g.note && <span className="ml-2 text-sm text-brand-muted">— {g.note}</span>}
                 </div>
                 <div className="flex items-center gap-3">
-                  {g.plus_ones > 0 && <span className="text-xs text-gray-400">+{g.plus_ones}</span>}
+                  {g.plus_ones > 0 && <span className="text-sm font-medium text-brand-muted">+{g.plus_ones}</span>}
                   <Badge status={g.rsvp_status} />
                 </div>
               </li>
@@ -70,9 +73,9 @@ export default function DashboardPage() {
 
 function Empty({ emoji, message }) {
   return (
-    <div className="text-center py-10 text-gray-400">
-      <div className="text-4xl mb-3">{emoji}</div>
-      <p className="text-sm">{message}</p>
+    <div className="py-10 text-center text-brand-muted">
+      <div className="mb-3 text-4xl">{emoji}</div>
+      <p className="text-base">{message}</p>
     </div>
   )
 }

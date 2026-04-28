@@ -56,14 +56,14 @@ export default function InvitePage() {
             Message Text <span className="normal-case font-normal">(use {'{name}'} for the guest's first name)</span>
           </span>
           <textarea className="field" rows={5} value={message} onChange={e => setMessage(e.target.value)} />
-          <span className="text-xs text-gray-400 mt-1 block text-right">
+          <span className="mt-1 block text-right text-sm text-brand-muted">
             {message.length} chars · {segments} SMS segment{segments > 1 ? 's' : ''}
           </span>
         </label>
 
         {/* Live preview */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800 leading-relaxed whitespace-pre-wrap min-h-[52px]">
-          {preview || <span className="text-gray-400">Preview will appear here…</span>}
+        <div className="min-h-[52px] whitespace-pre-wrap rounded-xl border border-brand-sea-mist/80 bg-brand-mist/60 p-4 text-base leading-relaxed text-brand-ocean">
+          {preview || <span className="text-brand-muted">Preview will appear here…</span>}
         </div>
 
         <button className="btn-secondary mt-4" onClick={saveMessage}>💾 Save Message</button>
@@ -81,23 +81,23 @@ export default function InvitePage() {
               desc: `Send to all ${guests.length} guests, including those already invited` },
           ].map(opt => (
             <label key={opt.value}
-                   className={`flex gap-3 items-start border-2 rounded-xl p-4 cursor-pointer transition
+                   className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 p-4 transition
                                ${target === opt.value
-                                 ? 'border-brand-pink bg-brand-pink-light/50'
-                                 : 'border-gray-200 hover:border-brand-pink/50'}`}>
+                                 ? 'border-brand-coral bg-brand-coral-wash/50'
+                                 : 'border-brand-sea-mist hover:border-brand-sea'}`}>
               <input type="radio" name="target" value={opt.value}
                      checked={target === opt.value}
                      onChange={() => setTarget(opt.value)}
-                     className="mt-0.5 accent-brand-pink" />
+                     className="mt-0.5 accent-brand-coral" />
               <div>
-                <div className="font-semibold text-sm">{opt.title}</div>
-                <div className="text-xs text-gray-500 mt-0.5">{opt.desc}</div>
+                <div className="text-base font-bold text-brand-ink">{opt.title}</div>
+                <div className="mt-0.5 text-sm text-brand-subtle">{opt.desc}</div>
               </div>
             </label>
           ))}
         </div>
 
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="mb-4 text-base text-brand-subtle">
           {sendCount === 0
             ? '⚠️ No guests to send to — add some guests first!'
             : `Will send to ${sendCount} guest${sendCount !== 1 ? 's' : ''}.`}
@@ -111,12 +111,12 @@ export default function InvitePage() {
         {results && (
           <div className="mt-5 space-y-3">
             {results.sent?.length > 0 && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
+              <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50 p-4 text-base text-emerald-950">
                 ✅ <strong>{results.sent.length} sent:</strong> {results.sent.map(g => g.name).join(', ')}
               </div>
             )}
             {results.failed?.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+              <div className="rounded-xl border-2 border-red-300 bg-red-50 p-4 text-base text-red-950">
                 ❌ <strong>{results.failed.length} failed:</strong>{' '}
                 {results.failed.map(g => `${g.name} (${g.error})`).join(', ')}
               </div>

@@ -7,12 +7,15 @@ export default function Countdown({ dateStr }) {
   useEffect(() => {
     function tick() {
       const diff = new Date(dateStr + 'T00:00:00') - new Date()
-      if (diff <= 0) { setPast(true); return }
+      if (diff <= 0) {
+        setPast(true)
+        return
+      }
       setUnits([
-        { num: Math.floor(diff / 86400000),              label: 'Days'    },
-        { num: Math.floor((diff % 86400000) / 3600000),  label: 'Hours'   },
-        { num: Math.floor((diff % 3600000)  / 60000),    label: 'Minutes' },
-        { num: Math.floor((diff % 60000)    / 1000),     label: 'Seconds' },
+        { num: Math.floor(diff / 86400000), label: 'Days' },
+        { num: Math.floor((diff % 86400000) / 3600000), label: 'Hours' },
+        { num: Math.floor((diff % 3600000) / 60000), label: 'Minutes' },
+        { num: Math.floor((diff % 60000) / 1000), label: 'Seconds' },
       ])
     }
     tick()
@@ -20,18 +23,22 @@ export default function Countdown({ dateStr }) {
     return () => clearInterval(id)
   }, [dateStr])
 
-  if (past) return <p className="text-center text-brand-pink font-bold text-xl">🎉 The party is today!</p>
+  if (past)
+    return (
+      <p className="text-center text-xl font-bold text-brand-coral">The celebration is here.</p>
+    )
   if (!units) return null
 
   return (
-    <div className="flex gap-4 flex-wrap justify-center">
+    <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
       {units.map(({ num, label }) => (
-        <div key={label} className="text-center bg-white/10 border border-white/20 rounded-2xl px-5 py-3 min-w-[64px]">
-          <div className="text-3xl font-extrabold leading-none bg-gradient-to-b from-pink-300 to-purple-400
-                          bg-clip-text text-transparent">
+        <div
+          key={label}
+          className="min-w-[60px] rounded-2xl border-2 border-brand-sea-mist bg-white px-4 py-3.5 text-center shadow-md shadow-brand-ocean/10">
+          <div className="text-4xl font-bold leading-none text-brand-ocean">
             {String(num).padStart(2, '0')}
           </div>
-          <div className="text-[10px] uppercase tracking-widest text-white/50 mt-1">{label}</div>
+          <div className="mt-1.5 text-sm font-semibold uppercase tracking-wide text-brand-ocean">{label}</div>
         </div>
       ))}
     </div>

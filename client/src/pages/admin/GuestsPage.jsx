@@ -104,9 +104,9 @@ export default function GuestsPage() {
         {/* CSV import */}
         <div className="card">
           <h2 className="section-title">📁 Import from CSV</h2>
-          <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed
-                            border-brand-pink-light rounded-xl p-8 cursor-pointer text-gray-400 text-sm
-                            hover:border-brand-pink hover:bg-brand-pink-light/30 transition">
+          <label className="flex flex-col items-center justify-center gap-2 cursor-pointer rounded-xl border-2 border-dashed
+                            border-brand-sea-mist/90 p-8 text-base text-brand-muted transition
+                            hover:border-brand-sea hover:bg-brand-mist/50">
             <span className="text-3xl">📋</span>
             <span>Click to upload a CSV — columns: <strong>Name, Phone</strong></span>
             <input type="file" accept=".csv" className="hidden" onChange={importCSV} />
@@ -118,7 +118,7 @@ export default function GuestsPage() {
           <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
             <h2 className="section-title mb-0">
               👥 All Guests
-              <span className="ml-2 text-gray-400 font-normal normal-case text-xs">
+              <span className="ml-2 text-sm font-normal normal-case text-brand-muted">
                 ({visible.length} shown / {guests.length} total)
               </span>
             </h2>
@@ -133,10 +133,10 @@ export default function GuestsPage() {
             {FILTERS.map(f => (
               <button key={f.key}
                       onClick={() => setFilter(f.key)}
-                      className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition
+                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition
                                   ${filter === f.key
-                                    ? 'bg-brand-pink text-white border-brand-pink'
-                                    : 'bg-white text-gray-500 border-gray-200 hover:border-brand-pink hover:text-brand-pink'}`}>
+                                    ? 'border-brand-coral bg-brand-coral text-white'
+                                    : 'border-brand-sea-mist bg-white text-brand-subtle hover:border-brand-sea hover:text-brand-ink'}`}>
                 {f.label}
               </button>
             ))}
@@ -144,14 +144,14 @@ export default function GuestsPage() {
 
           {/* Table */}
           {visible.length === 0 ? (
-            <div className="text-center py-10 text-gray-400 text-sm">
+            <div className="py-10 text-center text-base text-brand-muted">
               <div className="text-3xl mb-2">🔍</div>No guests match your filter.
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-brand-pink-light">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-xl border border-brand-sea-mist/70">
+              <table className="w-full text-base">
                 <thead>
-                  <tr className="bg-brand-pink-light text-brand-purple text-xs uppercase tracking-wider">
+                  <tr className="bg-brand-mist/90 text-sm font-bold uppercase tracking-wide text-brand-ink">
                     <th className="px-4 py-3 text-left">Name</th>
                     <th className="px-4 py-3 text-left">Phone</th>
                     <th className="px-4 py-3 text-left">RSVP</th>
@@ -161,18 +161,18 @@ export default function GuestsPage() {
                     <th className="px-4 py-3 text-left">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-brand-pink-light">
+                <tbody className="divide-y divide-brand-sea-mist/50">
                   {visible.map(g => (
-                    <tr key={g.id} className="hover:bg-pink-50/50 transition-colors">
-                      <td className="px-4 py-3 font-medium">{g.name}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-gray-500">{g.phone}</td>
+                    <tr key={g.id} className="transition-colors hover:bg-brand-mist/40">
+                      <td className="px-4 py-3 text-base font-semibold text-brand-ink">{g.name}</td>
+                      <td className="px-4 py-3 font-mono text-sm text-brand-subtle">{g.phone}</td>
                       <td className="px-4 py-3"><Badge status={g.rsvp_status} /></td>
-                      <td className="px-4 py-3 text-gray-400">{g.plus_ones > 0 ? `+${g.plus_ones}` : '—'}</td>
-                      <td className="px-4 py-3 text-xs text-gray-400 max-w-[140px] truncate">{g.note || '—'}</td>
+                      <td className="px-4 py-3 text-brand-muted">{g.plus_ones > 0 ? `+${g.plus_ones}` : '—'}</td>
+                      <td className="max-w-[140px] truncate px-4 py-3 text-sm text-brand-subtle">{g.note || '—'}</td>
                       <td className="px-4 py-3">
                         {g.invited_at
-                          ? <span className="text-xs text-green-600 font-medium">● Sent</span>
-                          : <span className="text-xs text-gray-400">Not yet</span>}
+                          ? <span className="text-sm font-bold text-emerald-900">● Sent</span>
+                          : <span className="text-sm font-medium text-brand-muted">Not yet</span>}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">

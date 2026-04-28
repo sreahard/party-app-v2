@@ -63,17 +63,20 @@ function adminBasicAuthPlugin(mode) {
   }
 }
 
-export default defineConfig(({ mode }) => ({
-  plugins: [adminBasicAuthPlugin(mode), react(), stripCrossoriginFromHtml()],
-  server: {
-    port: 5173,
-    proxy: {
-      // Forward API and webhook calls to the Express server during development
-      '/api':     { target: 'http://localhost:3000', changeOrigin: true },
-      '/webhook': { target: 'http://localhost:3000', changeOrigin: true },
+export default defineConfig(({ mode }) => {
+  const clientEnv = loadEnv(mode, __dirname, '')
+  const apiProxyTarget = clientEnv.VITE_API_PROXY_TARGET || 'http://127.0.0.1:3000'
+
+  return {
+    plugins: [adminBasicAuthPlugin(mode), react(), stripCrossoriginFromHtml()],
+    server: {
+      port: 5173,
+      proxy: {
+        '/api': { target: apiProxyTarget, changeOrigin: true },
+        '/webhook': { target: apiProxyTarget, changeOrigin: true },
+      },
     },
-  },
-  build: {
+    build: {
     // Output next to Express so production (e.g. Railway) always serves assets from the same tree as server.js.
     outDir: path.resolve(__dirname, '../server/public'),
     emptyOutDir: true,
@@ -87,4 +90,5 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-}))
+  }
+})

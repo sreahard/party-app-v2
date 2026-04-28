@@ -37,11 +37,11 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       {/* Guest page link */}
-      <div className="card bg-gradient-to-r from-brand-pink-light to-purple-50 border-purple-200">
-        <h2 className="section-title">🔗 Guest Party Page</h2>
-        <p className="text-sm text-gray-500 mb-3">Share this link so guests can view party details and RSVP online.</p>
-        <div className="flex gap-2 flex-wrap">
-          <input className="field flex-1 min-w-0 font-medium text-brand-purple"
+      <div className="card border-brand-sea-mist/60 bg-gradient-to-br from-brand-shell to-brand-mist/40">
+        <h2 className="section-title">Guest party page</h2>
+        <p className="mb-3 text-base text-brand-subtle">Share this link so guests can view party details and RSVP online.</p>
+        <div className="flex flex-wrap gap-2">
+          <input className="field min-w-0 flex-1 font-medium text-brand-ink"
                  readOnly value={guestUrl} />
           <button className="btn-primary" onClick={copyLink}>📋 Copy</button>
           <a href="/party" target="_blank" className="btn-secondary no-underline">↗ Preview</a>
@@ -51,7 +51,7 @@ export default function SettingsPage() {
       {/* Party details */}
       <div className="card">
         <h2 className="section-title">🎉 Party Details</h2>
-        <p className="text-sm text-gray-400 mb-5">These appear on the guest-facing party page.</p>
+        <p className="mb-5 text-base text-brand-subtle">These appear on the guest-facing party page.</p>
 
         <div className="space-y-4">
           {/* Title + emoji row */}
@@ -122,7 +122,7 @@ export default function SettingsPage() {
       {/* Twilio config */}
       <div className="card">
         <h2 className="section-title">🔧 Twilio Configuration</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="mb-4 text-base text-brand-subtle">
           Credentials are stored in environment variables, not here. See the README for setup steps.
         </p>
         <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-4 text-sm text-yellow-800 space-y-1">
@@ -137,11 +137,11 @@ export default function SettingsPage() {
       {/* Setup instructions */}
       <div className="card">
         <h2 className="section-title">📋 Deployment Checklist</h2>
-        <ol className="space-y-3 text-sm text-gray-700 list-decimal list-inside">
+        <ol className="list-inside list-decimal space-y-3 text-base text-brand-ink">
           <li>Fill in party details above and save — the guest page updates immediately.</li>
-          <li>Add your Twilio credentials to <code className="bg-gray-100 px-1 rounded">server/.env</code>.</li>
-          <li>Deploy to <a href="https://railway.app" target="_blank" className="text-brand-pink underline">Railway</a> or <a href="https://render.com" target="_blank" className="text-brand-pink underline">Render</a> — add env vars in their dashboard.</li>
-          <li>In Twilio console, set your phone's incoming webhook to <code className="bg-gray-100 px-1 rounded">https://YOUR-APP-URL/webhook/sms</code>.</li>
+          <li>Add your Twilio credentials to <code className="bg-brand-mist px-1 rounded">server/.env</code>.</li>
+          <li>Deploy to <a href="https://railway.app" target="_blank" className="text-brand-coral underline decoration-brand-coral/40 underline-offset-2">Railway</a> or <a href="https://render.com" target="_blank" className="text-brand-coral underline decoration-brand-coral/40 underline-offset-2">Render</a> — add env vars in their dashboard.</li>
+          <li>In Twilio console, set your phone's incoming webhook to <code className="bg-brand-mist px-1 rounded">https://YOUR-APP-URL/webhook/sms</code>.</li>
           <li>Share the guest page link above with your invitees!</li>
         </ol>
       </div>

@@ -17,7 +17,7 @@ export function EditGuestModal({ guest, onSave, onClose }) {
 
   return (
     <Overlay onClose={onClose}>
-      <h3 className="text-base font-semibold mb-5">✏️ Edit Guest</h3>
+      <h3 className="mb-5 text-xl font-bold text-brand-ink">Edit guest</h3>
       <div className="space-y-4">
         <Field label="Name">
           <input className="field" value={form.name} onChange={set('name')} />
@@ -54,9 +54,9 @@ export function DeleteGuestModal({ guest, onConfirm, onClose }) {
   if (!guest) return null
   return (
     <Overlay onClose={onClose}>
-      <h3 className="text-base font-semibold mb-3">🗑️ Remove Guest</h3>
-      <p className="text-sm text-gray-500 mb-6">
-        Remove <strong className="text-gray-800">{guest.name}</strong> from the guest list?
+      <h3 className="mb-3 text-xl font-bold text-brand-ink">Remove guest</h3>
+      <p className="mb-6 text-base text-brand-subtle">
+        Remove <strong className="text-brand-ink">{guest.name}</strong> from the guest list?
       </p>
       <div className="flex justify-end gap-3">
         <button className="btn-secondary" onClick={onClose}>Cancel</button>
@@ -69,9 +69,9 @@ export function DeleteGuestModal({ guest, onConfirm, onClose }) {
 // ── Shared ─────────────────────────────────────────────────────────────────────
 function Overlay({ children, onClose }) {
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-5"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-ocean/35 p-5 backdrop-blur-sm"
          onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-2xl p-7 w-full max-w-md shadow-2xl animate-slide-up">
+      <div className="w-full max-w-md animate-slide-up rounded-2xl border border-brand-sea-mist/60 bg-brand-shell p-7 shadow-2xl shadow-brand-ocean/10">
         {children}
       </div>
     </div>
