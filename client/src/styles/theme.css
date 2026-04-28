@@ -1,0 +1,43 @@
+/**
+ * App theme tokens — change colors here; Tailwind `brand.*` classes read these via tailwind.config.js.
+ *
+ * Format: HSL components only (no hsl() wrapper), space-separated — NEVER use commas inside a token.
+ *   Good:  `168 58% 12%`
+ *   Bad:   `168, 58%, 12%`  → breaks `hsl(var(...) / 1)` that Tailwind generates for `text-brand-ocean`, etc.
+ * Opacity modifiers like `bg-brand-sea-mist/50` need this same format.
+ *
+ * Tip: tweak --color-brand-ocean / --color-brand-ink together for heading + body dark text.
+ *      Shift all hues similarly (e.g. toward teal vs green) for a cohesive retone.
+ */
+:root {
+  /* Core seafoam family */
+  --color-brand-ocean: 175 100% 20%;
+  --color-brand-ocean-soft: 168 54% 23%;
+  --color-brand-sea: 172 47% 36%;
+  --color-brand-sea-mist: 170 48% 74%;
+  --color-brand-mist: 172 50% 92%;
+  --color-brand-sand: 165 35% 96%;
+  --color-brand-shell: 180 100% 99%;
+
+  /* Text tiers (same hue family as ocean) */
+  --color-brand-ink: 175 100% 20%;
+  --color-brand-subtle: 170 42% 21%;
+  --color-brand-muted: 168 26% 31%;
+
+  /* Accent */
+  --color-brand-coral: 7 54% 42%;
+  --color-brand-coral-deep: 7 52% 35%;
+  --color-brand-coral-wash: 10 35% 92%;
+  --color-brand-gold: 43 42% 50%;
+  --color-brand-gold-light: 42 48% 88%;
+
+  /* Guest /party page (not HSL triplets — full CSS values) */
+  --party-chrome-bg: hsl(165 38% 95%);
+  --party-page-gradient: linear-gradient(
+    180deg,
+    hsl(var(--color-brand-shell)) 0%,
+    hsl(165 38% 95%) 40%,
+    hsl(var(--color-brand-mist)) 75%,
+    hsl(168 42% 80%) 100%
+  );
+}
