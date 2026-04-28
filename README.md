@@ -68,7 +68,7 @@ Open http://localhost:5173 in your browser.
    - `TWILIO_ACCOUNT_SID`
    - `TWILIO_AUTH_TOKEN`
    - `TWILIO_PHONE_NUMBER`
-5. **Persist the database (SQLite):** the app’s data lives in a single SQLite file. Railway’s filesystem is wiped on each deploy unless you use a volume. In Railway: add a **Volume** to the service (e.g. mount path `/data`), then set **`SQLITE_PATH=/data/rsvp.db`** in the service variables. Redeploy once; new data is stored on the volume and survives deploys. (Alternatively, switch to Railway Postgres and point the app at it — not configured in this repo yet.)
+5. **Persist the database (SQLite):** Railway’s app disk is wiped every deploy unless you use a **Volume**. In Railway: open your **service** → **Volumes** → add a volume (any mount path, e.g. `/data`). Railway injects `RAILWAY_VOLUME_MOUNT_PATH`; this app automatically stores **`rsvp.db` inside that mount**, so you do **not** need `SQLITE_PATH` unless you want a custom filename. Check deploy logs for `SQLite database file:` to confirm the path. (Optional: set `SQLITE_PATH=/data/my.db` to override.) For non-Railway hosts, set `SQLITE_PATH` to a path on persistent storage. Postgres is not wired in this repo yet.
 6. Set your Twilio phone number's incoming webhook to:
    ```
    https://YOUR-RAILWAY-URL/webhook/sms

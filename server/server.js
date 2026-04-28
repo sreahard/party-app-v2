@@ -83,13 +83,32 @@ app.use(
 );
 
 // ─── Database ──────────────────────────────────────────────────────────────────
-// Default: next to this file (stable cwd). On Railway/hosted SQLite, set SQLITE_PATH
-// to a file on a persistent volume (e.g. /data/rsvp.db) or the DB is lost every deploy.
-const dbPath = process.env.SQLITE_PATH
-  ? path.resolve(process.env.SQLITE_PATH)
-  : path.join(__dirname, 'rsvp.db');
+// Local: rsvp.db next to server.js. Hosted: put the file on a persistent volume or it is
+// wiped every deploy.
+// 1) SQLITE_PATH — explicit file path (highest priority).
+// 2) RAILWAY_VOLUME_MOUNT_PATH — set by Railway when a volume is attached; we store
+//    rsvp.db there automatically so you don't have to duplicate the mount path in env.
+// 3) Otherwise default under this directory (ephemeral on Railway/Docker).
+function resolveSqlitePath() {
+  if (process.env.SQLITE_PATH) return path.resolve(process.env.SQLITE_PATH);
+  const vol = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+  if (vol) return path.join(vol, 'rsvp.db');
+  return path.join(__dirname, 'rsvp.db');
+}
+
+const dbPath = resolveSqlitePath();
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new Database(dbPath);
+
+if (process.env.RAILWAY_ENVIRONMENT && !process.env.SQLITE_PATH && !process.env.RAILWAY_VOLUME_MOUNT_PATH) {
+  console.warn(
+    '[party-app] No persistent volume detected (RAILWAY_VOLUME_MOUNT_PATH unset). SQLite at ' +
+      dbPath +
+      ' will be lost on each deploy. Add a Volume to this Railway service, or set SQLITE_PATH to a path on a volume.'
+  );
+} else {
+  console.log('[party-app] SQLite database file: ' + dbPath);
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS guests (
